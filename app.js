@@ -1,6 +1,8 @@
 let numeroSecreto = 0;
 // console.log('numeroSecreto: '+ numeroSecreto);
 let intentos = 0;
+let numerosJugados = [];
+let numeroMaximo = 5;
 
 function inicializaJuego() {
   // Generamos el numero secreto.
@@ -9,13 +11,24 @@ function inicializaJuego() {
   intentos = 1;
   // Inicializamos los mensajes para el usuario.
   asignaTextoElemento('h1', '¡Adivina el Número Secreto!');
-  asignaTextoElemento('p', 'Escribe un numero del 1 al 10:');
+  asignaTextoElemento('p', `Escribe un numero del 1 al ${numeroMaximo}:`);
   // Deshabilitamos el botón para reiniciar el juego.
   document.querySelector('#botonReiniciar').setAttribute('disabled', true);
 }
 
 function generaNumeroSecreto() {
-  return Math.floor(Math.random() * (10)) + 1;
+  let numeroGenerado = Math.floor(Math.random() * (numeroMaximo)) + 1;
+  console.log(`numeroGenerado: ${numeroGenerado}`);
+  if (numerosJugados.includes(numeroGenerado)) {
+    // Si ya se jugo el numero generado.
+    // Tratamos de generar uno nuevo mediante recursividad.
+    return generaNumeroSecreto();
+  }
+  // Si el numero generado no se ha jugado.
+  // Agregamos el numero generado a la lista de numeros jugados.
+  console.log(`numerosJugados: ${numerosJugados}`);
+  numerosJugados.push(numeroGenerado);
+  return numeroGenerado;
 }
 
 function asignaTextoElemento(elemento, texto) {
@@ -51,9 +64,22 @@ function limpiaNumeroUsuario() {
 function reiniciaJuego() {
   // Limpiamos el numero del usuario.
   limpiaNumeroUsuario();
-  // Reinicializamos el juego.
-  inicializaJuego();
+  if (numerosJugados.length === numeroMaximo) {
+    // Si el usuario ya adivino todos los numeros posibles.
+    finalizaJuego();
+  } else {
+    // Reinicializamos el juego.
+    inicializaJuego();
+  }
   return;
+}
+
+function finalizaJuego() {
+  asignaTextoElemento(
+    'p',
+    `¡Felicidades! Has adivinado todos los numeros del 1 al ${numeroMaximo}.`);
+  document.getElementById('botonReiniciar').setAttribute('disabled','true');
+  document.getElementById('botonIntentar').setAttribute('disabled','true');
 }
 
 inicializaJuego();
